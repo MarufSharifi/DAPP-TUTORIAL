@@ -1,5 +1,69 @@
 <html>
     <body>
         <h1>This is Maruf first dApp</h1>
+        <p>Here we are gonna setup some mood</p>
+        <label for="mood">Input </label>
+        <input type="text" id="mood" />
+        <div>
+            <button onclick="getMood()">Get Mood</button>
+        </div>
+        <div>
+            <button onclick="setMood()">Set Mood</button>
+        </div>
     </body>
+    <script src="https://cdn.ethers.io/scripts/ethers-v4.min.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        window.ethereum.enable();
+        var provider = new ethers.providers.Web3Provider(web3.currentProvider, "rinkeby");
+        var moodContractAddress = '0x542abc73334728D42E82cBe6C1fb9C8b7Ea81a92';
+        var moodContractAbi = [
+	{
+		"inputs": [],
+		"name": "getMood",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_mood",
+				"type": "string"
+			}
+		],
+		"name": "setMood",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+        ];
+        
+        var moodContract;
+        var signer;
+      
+        provider.listAccounts().then((accounts) => {
+            signer = provider.getSigner(accounts[0]);
+            moodContract = new ethers.Contract(moodContractAddress, moodContractAbi, signer);
+        });
+
+    
+       async function  getMood() {
+           getMoodPromise = moodContract.getMood();
+           var mood = await  getMoodPromise;
+           console.log(mood);
+        }
+        
+       async function setMood() {
+            let mood = document.getElementById('mood').value;
+            setMoodPromise = moodContract.setMood(mood);
+            await setMoodPromise;
+        }
+    </script>
 </html>
